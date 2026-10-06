@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Miko Assistant</title>
+  <!-- xterm.js stylesheet (lokal node_modules dengan fallback CDN) -->
+  <link rel="stylesheet" href="./node_modules/@xterm/xterm/css/xterm.css" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/css/xterm.min.css';" />
+  <!-- Modular Stylesheet Miko -->
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+
+  <!-- Maskot Miko -->
+  <div id="pet-container" title="Seret untuk memindahkan, klik untuk buka/tutup terminal">
+    <div id="speech-bubble">Selamat Datang<br>Singkronisasi Data Miko Berhasil<br>Miko Siap Membantu</div>
+    <div id="pet-avatar-box">
+      <img id="pet-img" class="pet-avatar active" src="Ekspresi Miko/Sapa.png" alt="Miko Companion" draggable="false" />
+      <img id="pet-img-back" class="pet-avatar" alt="Miko Companion Transition" draggable="false" />
+    </div>
+  </div>
+
+  <!-- Terminal Box -->
+  <div id="terminal-box">
+    <div class="term-header">
+      <div class="term-title">
+        <div class="mac-dots">
+          <button class="mac-dot mac-dot-close" id="term-close-dot" title="Tutup Terminal">
+            <svg class="dot-icon dot-icon-close" viewBox="0 0 8 8" fill="none" stroke="#4c0000" stroke-width="1.2" stroke-linecap="round">
+              <line x1="1.5" y1="1.5" x2="6.5" y2="6.5"/>
+              <line x1="6.5" y1="1.5" x2="1.5" y2="6.5"/>
+            </svg>
+          </button>
+          <button class="mac-dot mac-dot-minimize" id="term-min-dot" title="Sembunyikan Miko (Alt+M)">
+            <svg class="dot-icon dot-icon-min" viewBox="0 0 8 8" fill="none" stroke="#5f3500" stroke-width="1.3" stroke-linecap="round">
+              <line x1="1.5" y1="4" x2="6.5" y2="4"/>
+            </svg>
+          </button>
+          <button class="mac-dot mac-dot-maximize" id="term-max-dot" title="Perbesar / Normal Ukuran Terminal">
+            <svg class="dot-icon dot-icon-max" viewBox="0 0 8 8" fill="#004500">
+              <polygon points="1.5,1.5 4.8,1.5 1.5,4.8"/>
+              <polygon points="6.5,6.5 3.2,6.5 6.5,3.2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="term-header-center">
+        <div class="term-title-badge">
+          <svg class="term-proxy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span class="term-title-text" id="term-title-text">miko — bash — 80×24</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <!-- Mute/Unmute Voice & Speech Bubble -->
+        <button class="action-btn mute-btn" id="mute-btn" title="Suara & Pesan Aktif (Klik untuk Bisukan)">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+          </svg>
+        </button>
+        <!-- Folder Selection Button (Klik untuk buka popup pilih folder) -->
+        <button class="action-btn folder-btn" id="folder-btn" title="Pilih Folder Disk C/E/F (Alt+F)">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+          </svg>
+        </button>
+        <!-- Server 9router & Terminal CMD Button -->
+        <button class="action-btn cmd-btn" id="cmd-btn" title="Server 9router & Terminal CMD Windows (Alt+C)">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4 17 10 11 4 5"></polyline>
+            <line x1="12" y1="19" x2="20" y2="19"></line>
+          </svg>
+        </button>
+        <!-- Subtle Divider -->
+        <div class="header-divider"></div>
+        <!-- Clear Screen -->
+        <button class="action-btn clear-btn" id="clear-btn" title="Bersihkan Layar Terminal">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 6h18"/>
+            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+          </svg>
+        </button>
+        <!-- Restart Session -->
+        <button class="action-btn restart-btn" id="restart-btn" title="Muat Ulang Sesi Bash">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"/>
+            <polyline points="1 20 1 14 7 14"/>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+          </svg>
+        </button>
+        <!-- Quit Miko -->
+        <button class="action-btn quit-btn" id="quit-btn" title="Keluar Miko Sepenuhnya">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18.36 6.64a9 9 0 1 1-12.73 0"/>
+            <line x1="12" y1="2" x2="12" y2="12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Folder Navigator Popup (Hanya muncul saat tombol folder diklik) -->
+    <div id="folder-popup" class="folder-popup">
+      <div class="folder-input-wrapper">
+        <svg class="folder-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="folder-input" placeholder="Pilih disk (c / e / f) lalu ketik nama folder..." spellcheck="false" autocomplete="off" />
+        <button class="folder-esc-badge" id="folder-close-btn" title="Tutup (Esc)">✕</button>
+      </div>
+      <div id="folder-list" class="folder-list"></div>
+      <div class="folder-popup-footer">
+        <span id="folder-status-text">Pilih disk</span>
+        <div class="folder-shortcuts">
+          <span><kbd>↑</kbd><kbd>↓</kbd> Pilih</span>
+          <span><kbd>Tab</kbd> Masuk</span>
+          <span><kbd>Enter</kbd> Buka</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Terminal CMD & Server 9router Popup (Native xterm.js CMD Terminal) -->
+    <div id="cmd-popup" class="cmd-popup">
+      <div class="cmd-popup-header">
+        <div class="cmd-popup-title">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="#34d399">
+            <path d="M4 3h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm3.5 4.5l4 3.5-4 3.5 1.5 1.5 5.5-5-5.5-5-1.5 1.5zm6.5 8h6v-2h-6v2z"/>
+          </svg>
+          <div id="cmd-status-badge" class="cmd-status-badge offline" title="Status server 9router">
+            <svg class="status-dot" width="7" height="7" viewBox="0 0 8 8">
+              <circle cx="4" cy="4" r="3.5" fill="currentColor"/>
+            </svg>
+            <span id="cmd-status-text">9router: Nonaktif</span>
+          </div>
+        </div>
+        <div class="cmd-header-tools">
+          <button class="cmd-tool-btn" id="cmd-toggle-9router-btn" title="Jalankan 9router">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="6 4 20 12 6 20"></polygon>
+            </svg>
+            <span id="cmd-toggle-text">Jalankan 9router</span>
+          </button>
+          <button class="cmd-tool-btn" id="cmd-web-btn" title="Buka Dashboard Web UI di browser">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            </svg>
+            <span>Web UI</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Area terminal xterm.js autentik untuk CMD Windows -->
+      <div id="cmd-term-container"></div>
+    </div>
+
+    <!-- Area xterm.js murni tanpa input bar terpisah -->
+    <div id="terminal-container"></div>
+  </div>
+
+  <!-- Script Modular Utama -->
+  <script src="./renderer.js"></script>
+</body>
+</html>

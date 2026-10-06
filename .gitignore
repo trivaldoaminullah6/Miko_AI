@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Build outputs
+dist/
+*/dist/
+out/
+*/out/
+*.vsix
+*/ *.vsix
+
+# Testing & logs
+.vscode-test/
+*/.vscode-test/
+*.log
+npm-debug.log*
+
+# Environment & local settings
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db

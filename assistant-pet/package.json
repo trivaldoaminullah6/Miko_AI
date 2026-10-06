@@ -1,0 +1,23 @@
+{
+  "name": "assistant-pet",
+  "version": "1.0.0",
+  "description": "Desktop AI / WSL Companion Pet",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "desktop-pet",
+    "electron",
+    "wsl",
+    "companion"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@xterm/addon-fit": "^0.10.0",
+    "@xterm/xterm": "^5.5.0",
+    "electron": "^34.2.0"
+  }
+}
